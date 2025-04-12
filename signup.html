@@ -10,15 +10,17 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
+        // Firebase configuration (your provided config)
         const firebaseConfig = {
-  apiKey: "AIzaSyASmf5jo5XwUSMEE-PWPXh9J5HQbf0kbW4",
-  authDomain: "atsa1234-ae1a2.firebaseapp.com",
-  projectId: "atsa1234-ae1a2",
-  storageBucket: "atsa1234-ae1a2.firebasestorage.app",
-  messagingSenderId: "9350603529",
-  appId: "1:9350603529:web:50241f95113529ef2429d8",
-  measurementId: "G-Q1KKHXNLXY"
-};
+            apiKey: "AIzaSyASmf5jo5XwUSMEE-PWPXh9J5HQbf0kbW4",
+            authDomain: "atsa1234-ae1a2.firebaseapp.com",
+            projectId: "atsa1234-ae1a2",
+            storageBucket: "atsa1234-ae1a2.firebasestorage.app",
+            messagingSenderId: "9350603529",
+            appId: "1:9350603529:web:50241f95113529ef2429d8",
+            measurementId: "G-Q1KKHXNLXY"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
@@ -28,6 +30,13 @@
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+
+            // Ensure password and confirm password match
+            if (password !== confirmPassword) {
+                document.getElementById("error-message").textContent = "Passwords do not match!";
+                return;
+            }
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
@@ -49,8 +58,17 @@
             <label for="email">Email:</label>
             <input type="email" id="email" required placeholder="Enter your email">
 
+            <label for="username">Username:</label>
+            <input type="text" id="username" required placeholder="Enter your username">
+
             <label for="password">Password:</label>
             <input type="password" id="password" required placeholder="Enter your password">
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" required placeholder="Confirm your password">
+
+            <label for="phone">Phone (optional):</label>
+            <input type="text" id="phone" placeholder="Enter your phone number (optional)">
 
             <button type="submit" id="signup-btn">Sign Up</button>
         </form>
