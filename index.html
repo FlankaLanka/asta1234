@@ -5,9 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - My Game</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <!-- Firebase SDK (modular version) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Handle login when the form is submitted
+        document.getElementById("login-form").addEventListener("submit", (e) => {
+            e.preventDefault();  // Prevent form refresh
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log("Logged in successfully:", user.email);
+                    window.location.href = "game.html";  // Redirect to Unity WebGL game page
+                })
+                .catch((error) => {
+                    console.error("Error:", error.message);
+                    document.getElementById("error-message").textContent = "Error: " + error.message;  // Show error message
+                });
+        });
+    </script>
 </head>
 <body>
     <div id="login-container">
@@ -24,7 +57,5 @@
         <div id="error-message"></div>
         <p>Don't have an account? <a href="signup.html">Sign up</a></p>
     </div>
-
-    <script src="login.js"></script>
 </body>
 </html>
