@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - My Game</title>
+    <title>Sign Up - My Game</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 </head>
 <body>
-    <div id="login-container">
-        <h2>Login</h2>
-        <form id="login-form">
+    <div id="signup-container">
+        <h2>Create an Account</h2>
+        <form id="signup-form">
             <label for="email">Email:</label>
             <input type="email" id="email" required placeholder="Enter your email">
 
             <label for="password">Password:</label>
             <input type="password" id="password" required placeholder="Enter your password">
 
-            <button type="submit" id="login-btn">Login</button>
+            <button type="submit" id="signup-btn">Sign Up</button>
         </form>
         <div id="error-message"></div>
-        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        <p>Already have an account? <a href="index.html">Login</a></p>
     </div>
 
-    <script src="login.js"></script>
+    <script src="signup.js"></script>
 </body>
 </html>
