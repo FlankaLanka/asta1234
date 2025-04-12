@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - My Game</title>
     <link rel="stylesheet" href="styles.css">
-    
+
     <!-- Firebase SDK (modular version) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";  // Import Firebase Functions
+
         // Firebase configuration (your provided config)
         const firebaseConfig = {
             apiKey: "AIzaSyASmf5jo5XwUSMEE-PWPXh9J5HQbf0kbW4",
@@ -24,6 +25,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const functions = getFunctions(app);  // Initialize Firebase Functions
 
         // Firebase sign-up logic
         async function handleSignUp(email, password) {
@@ -38,13 +40,38 @@
             }
         }
 
-        // Handle Stripe Checkout
+        // Handle Stripe Payment
         async function handleStripeCheckout(amount) {
+            // Ensure Stripe is loaded before using it
             const stripe = Stripe("pk_test_51RD9gaIR8BjfzLpaciyxpwm6GP2FUol1sHPNcktlupjKWCbPFSytxRpI9skKn2DyB6l7DFkxHMdZa5MfrGOfYgk400raoRP0yM"); // Your provided publishable key
 
-            // Redirect to Stripe Checkout page
-            const checkoutSessionUrl = "https://buy.stripe.com/test_dR63fa0Dje1K9ag3cc";  // Replace with your actual Stripe Checkout session URL
-            window.location.href = checkoutSessionUrl;  // Redirect the user to the Stripe Checkout page
+            // Trigger the payment flow by calling Firebase function to create a payment intent (server-side)
+            const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
+            try {
+                const result = await createPaymentIntent({ amount: amount });
+                const clientSecret = result.data.clientSecret;
+
+                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: { /* Your card details from Stripe.js */ },
+                        billing_details: { name: document.getElementById("username").value }
+                    }
+                });
+
+                if (error) {
+                    console.error("Payment failed:", error.message);
+                    document.getElementById("error-message").textContent = "Error: " + error.message;
+                } else if (paymentIntent.status === 'succeeded') {
+                    console.log("Payment succeeded, proceed to sign up!");
+                    // Proceed with Firebase sign-up
+                    const email = document.getElementById("email").value;
+                    const password = document.getElementById("password").value;
+                    handleSignUp(email, password);
+                }
+            } catch (error) {
+                console.error("Payment error:", error.message);
+                document.getElementById("error-message").textContent = "Payment error: " + error.message;
+            }
         }
 
         // Handle form submission
@@ -97,5 +124,8 @@
         <div id="error-message"></div>
         <p>Already have an account? <a href="index.html">Login</a></p>
     </div>
+
+    <!-- Stripe.js (load this script at the bottom) -->
+    <script src="https://js.stripe.com/v3/"></script>
 </body>
 </html>
