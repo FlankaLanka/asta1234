@@ -10,6 +10,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";  // Import Firebase Functions
 
         // Firebase configuration (your provided config)
         const firebaseConfig = {
@@ -24,6 +25,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const functions = getFunctions(app);  // Initialize Firebase Functions
 
         // Firebase sign-up logic
         async function handleSignUp(email, password) {
@@ -40,11 +42,10 @@
 
         // Handle Stripe Payment
         async function handleStripePayment(amount) {
-            // Ensure Stripe is loaded before using it
             const stripe = Stripe("pk_test_51RD9gaIR8BjfzLpaciyxpwm6GP2FUol1sHPNcktlupjKWCbPFSytxRpI9skKn2DyB6l7DFkxHMdZa5MfrGOfYgk400raoRP0yM"); // Your provided publishable key
 
             // Trigger the payment flow by calling Firebase function to create a payment intent (server-side)
-            const createPaymentIntent = firebase.functions().httpsCallable('createPaymentIntent');
+            const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
             try {
                 const result = await createPaymentIntent({ amount: amount });
                 const clientSecret = result.data.clientSecret;
