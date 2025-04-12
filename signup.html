@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - My Game</title>
     <link rel="stylesheet" href="styles.css">
+    
     <!-- Firebase SDK (modular version) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -39,6 +40,7 @@
 
         // Handle Stripe Payment
         async function handleStripePayment(amount) {
+            // Ensure Stripe is loaded before using it
             const stripe = Stripe("pk_test_51RD9gaIR8BjfzLpaciyxpwm6GP2FUol1sHPNcktlupjKWCbPFSytxRpI9skKn2DyB6l7DFkxHMdZa5MfrGOfYgk400raoRP0yM"); // Your provided publishable key
 
             // Trigger the payment flow by calling Firebase function to create a payment intent (server-side)
@@ -120,5 +122,8 @@
         <div id="error-message"></div>
         <p>Already have an account? <a href="index.html">Login</a></p>
     </div>
+
+    <!-- Stripe.js (load this script at the bottom) -->
+    <script src="https://js.stripe.com/v3/"></script>
 </body>
 </html>
